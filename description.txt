@@ -1,0 +1,18 @@
+Actividad 2: Proyecto Práctico de Programación Orientada a Objetos (POO en Python)
+Objetivo: Traducir los conceptos teóricos de Conceptos básicos de redes en un escenario práctico de diseño topológico.
+
+
+Para desarrollar una solución robusta que abstraiga de forma elegante un problema del campus o del área de sistemas (como la gestión de equipos de un laboratorio de redes o el registro de usuarios), el código fuente debe cumplir estrictamente con los siguientes requerimientos técnicos:
+1. Modularidad y Estructura del Código (Separación de Responsabilidades): El proyecto no debe ser un único archivo monolítico. Debe organizarse de forma limpia en módulos independientes:
+main.py: Archivo principal encargado de inicializar el sistema, mostrar un menú de interacción y ejecutar las pruebas de los objetos.
+models.py: Módulo que contiene la definición de las clases, atributos y métodos de negocio aplicando los pilares de la POO.
+excepciones_personalizadas.py: Módulo opcional pero recomendado para centralizar el manejo de errores propios del dominio.
+2. Modelado de Clases, Abstracción y Encapsulamiento:
+Diseñar una superclase o clase base que represente una entidad real del campus (por ejemplo, DispositivoRed o RecursoAcademico), estructurando adecuadamente su estado (atributos) y su comportamiento (métodos).
+Aplicar encapsulamiento estricto utilizando atributos privados (con doble guion bajo, ej. __ip, __estado) y exponiendo interfaces seguras mediante decoradores de propiedades (@property y @setter) para validar los datos antes de modificar la memoria.
+3. Herencia y Polimorfismo:
+Crear al menos dos subclases especializadas que hereden de la clase base (por ejemplo, Router y Switch heredando de DispositivoRed).
+Implementar polimorfismo: sobrescribir (overriding) un método clave en las clases hijas (como ejecutar_diagnostico() o calcular_ancho_banda()) para que cada dispositivo responda de manera particular al mismo mensaje.
+4. Manejo Avanzado de Excepciones (Nivel PCAP):
+Implementar bloques estructurados try - except - else - finally para capturar errores típicos de ejecución (como conversiones erróneas de tipos, división por cero o índices fuera de rango).
+Crear y lanzar al menos una excepción personalizada (heredando de la clase base Exception), por ejemplo: class ExcepcionConfiguracionInvalida(Exception): pass, para controlar parámetros de entrada incorrectos en los     objetos.         
