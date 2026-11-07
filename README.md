@@ -22,6 +22,7 @@ El backend aplica encapsulamiento, herencia, polimorfismo y excepciones personal
 - [Variables de entorno](#variables-de-entorno)
 - [Conceptos POO vs. enunciado](#conceptos-poo-vs-enunciado)
 - [Solución de problemas](#solución-de-problemas)
+- [Manual de uso (funcionalidades)](MANUAL_DE_USO.md)
 
 ---
 
