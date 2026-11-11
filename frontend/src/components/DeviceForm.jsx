@@ -12,7 +12,7 @@ const empty = {
   vlan_count: 1,
 };
 
-export default function DeviceForm({ onSubmit, estados }) {
+export default function DeviceForm({ onSubmit, estados, compact = false }) {
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
 
@@ -44,7 +44,7 @@ export default function DeviceForm({ onSubmit, estados }) {
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className={`form${compact ? " form-compact" : ""}`} onSubmit={handleSubmit}>
       <label>
         Tipo
         <select value={form.tipo} onChange={(e) => set("tipo", e.target.value)}>

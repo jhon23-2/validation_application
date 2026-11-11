@@ -317,3 +317,237 @@ select:focus {
   color: var(--muted);
   font-size: 0.8rem;
 }
+
+/* —— UI minimalista CRUD —— */
+.app-min {
+  max-width: 960px;
+  padding: 1.25rem 1rem 2rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.topbar .muted {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+}
+
+.pills {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.toast {
+  background: rgba(61, 214, 140, 0.12);
+  border: 1px solid rgba(61, 214, 140, 0.35);
+  color: #b8f5d4;
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.crud-layout {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .crud-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+  .panel-span {
+    grid-column: 1 / -1;
+  }
+}
+
+.section-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.search-bar input {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.device-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.device-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: left;
+  padding: 0.6rem 0.65rem;
+  margin-bottom: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.device-row:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.device-row.selected {
+  border-color: var(--accent-dim);
+  background: rgba(61, 156, 245, 0.08);
+}
+
+.device-row-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.device-row-ip {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.estado-dot {
+  font-size: 0.72rem;
+  text-transform: capitalize;
+  color: var(--muted);
+}
+
+.detail.empty {
+  padding: 0.5rem 0;
+}
+
+.detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-head h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.15rem;
+}
+
+.detail-meta {
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+}
+
+.detail-meta div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-meta dt {
+  color: var(--muted);
+  min-width: 4.5rem;
+}
+
+.detail-meta dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-block {
+  margin-bottom: 1rem;
+}
+
+.detail-block h4 {
+  margin: 0 0 0.45rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detail-block .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detail-block select {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.mini-form {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form-compact {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn.link {
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.btn.link:hover {
+  text-decoration: underline;
+  background: none;
+}

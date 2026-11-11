@@ -64,6 +64,18 @@ def crear_dispositivo():
         pass
 
 
+@app.get("/api/dispositivos/buscar")
+def buscar_dispositivo():
+    criterio = request.args.get("id") or request.args.get("q") or ""
+    try:
+        dispositivo = _registro.buscar_dispositivo(criterio)
+    except ExcepcionConfiguracionInvalida:
+        raise
+    if not dispositivo:
+        raise ExcepcionDispositivoNoEncontrado(criterio or "(vacío)")
+    return jsonify(dispositivo.to_dict())
+
+
 @app.get("/api/dispositivos/<dispositivo_id>")
 def obtener_dispositivo(dispositivo_id: str):
     dispositivo = _registro.obtener(dispositivo_id)
@@ -72,9 +84,27 @@ def obtener_dispositivo(dispositivo_id: str):
     return jsonify(dispositivo.to_dict())
 
 
+@app.put("/api/dispositivos/<dispositivo_id>")
+def actualizar_dispositivo(dispositivo_id: str):
+    payload = request.get_json(silent=True) or {}
+    try:
+        dispositivo = _registro.actualizar_dispositivo(dispositivo_id, payload)
+    except ExcepcionConfiguracionInvalida:
+        raise
+    except (TypeError, ValueError) as err:
+        raise ExcepcionConfiguracionInvalida(
+            "Datos de actualización inválidos.", "body"
+        ) from err
+    else:
+        _persistir()
+        return jsonify(dispositivo.to_dict())
+    finally:
+        pass
+
+
 @app.delete("/api/dispositivos/<dispositivo_id>")
 def eliminar_dispositivo(dispositivo_id: str):
-    if not _registro.eliminar(dispositivo_id):
+    if not _registro.eliminar_dispositivo(dispositivo_id):
         raise ExcepcionDispositivoNoEncontrado(dispositivo_id)
     _persistir()
     return "", 204
@@ -82,13 +112,13 @@ def eliminar_dispositivo(dispositivo_id: str):
 
 @app.patch("/api/dispositivos/<dispositivo_id>/estado")
 def actualizar_estado(dispositivo_id: str):
-    dispositivo = _registro.obtener(dispositivo_id)
-    if not dispositivo:
-        raise ExcepcionDispositivoNoEncontrado(dispositivo_id)
     payload = request.get_json(silent=True) or {}
+    estado = payload.get("estado", "")
     try:
-        dispositivo.estado = payload.get("estado", "")
-    except ExcepcionConfiguracionInvalida:
+        dispositivo = _registro.actualizar_estado(dispositivo_id, estado)
+    except ExcepcionConfiguracionInvalida as err:
+        if err.campo == "id":
+            raise ExcepcionDispositivoNoEncontrado(dispositivo_id) from err
         raise
     except (TypeError, AttributeError) as err:
         raise ExcepcionConfiguracionInvalida("Estado no válido.", "estado") from err

@@ -323,11 +323,71 @@ class RegistroLaboratorio:
     def obtener(self, dispositivo_id: str) -> DispositivoRed | None:
         return self.__dispositivos.get(dispositivo_id)
 
+    def buscar_dispositivo(self, criterio: str) -> DispositivoRed | None:
+        """Busca por UUID completo o por prefijo del id (mín. 4 caracteres)."""
+        criterio = (criterio or "").strip()
+        if len(criterio) < 4:
+            raise ExcepcionConfiguracionInvalida(
+                "Indica al menos 4 caracteres del ID para buscar.", "id"
+            )
+        exacto = self.obtener(criterio)
+        if exacto:
+            return exacto
+        coincidencias = [
+            d for d in self.__dispositivos.values() if d.id.startswith(criterio)
+        ]
+        if len(coincidencias) == 1:
+            return coincidencias[0]
+        if len(coincidencias) > 1:
+            raise ExcepcionConfiguracionInvalida(
+                "Hay varios equipos con ese prefijo; escribe más caracteres del ID.",
+                "id",
+            )
+        return None
+
+    def eliminar_dispositivo(self, dispositivo_id: str) -> bool:
+        return self.eliminar(dispositivo_id)
+
     def eliminar(self, dispositivo_id: str) -> bool:
         if dispositivo_id in self.__dispositivos:
             del self.__dispositivos[dispositivo_id]
             return True
         return False
+
+    def actualizar_estado(self, dispositivo_id: str, estado: str) -> DispositivoRed:
+        dispositivo = self.obtener(dispositivo_id)
+        if not dispositivo:
+            raise ExcepcionConfiguracionInvalida(
+                f"No existe dispositivo con id: {dispositivo_id}", "id"
+            )
+        dispositivo.estado = estado
+        return dispositivo
+
+    def actualizar_dispositivo(self, dispositivo_id: str, payload: dict) -> DispositivoRed:
+        dispositivo = self.obtener(dispositivo_id)
+        if not dispositivo:
+            raise ExcepcionConfiguracionInvalida(
+                f"No existe dispositivo con id: {dispositivo_id}", "id"
+            )
+        if "nombre" in payload:
+            dispositivo.nombre = payload["nombre"]
+        if "ip" in payload:
+            dispositivo.ip = payload["ip"]
+        if "ubicacion" in payload:
+            dispositivo.ubicacion = payload["ubicacion"]
+        if "estado" in payload:
+            dispositivo.estado = payload["estado"]
+        if isinstance(dispositivo, Router):
+            if "tablas_enrutamiento" in payload:
+                dispositivo.tablas_enrutamiento = payload["tablas_enrutamiento"]
+            if "ancho_banda_mbps" in payload:
+                dispositivo.ancho_banda_mbps = payload["ancho_banda_mbps"]
+        elif isinstance(dispositivo, Switch):
+            if "puertos" in payload:
+                dispositivo.puertos = payload["puertos"]
+            if "vlan_count" in payload:
+                dispositivo.vlan_count = payload["vlan_count"]
+        return dispositivo
 
     def diagnosticar_todos(self) -> list[dict]:
         return [d.ejecutar_diagnostico() for d in self.listar()]

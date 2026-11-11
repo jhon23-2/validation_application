@@ -165,8 +165,12 @@ def menu_interactivo(registro: RegistroLaboratorio, repo: RepositorioInventario)
                 for d in items:
                     print(d.ejecutar_diagnostico())
                 continue
-            dev_id = _input_opcion("ID del dispositivo (primeros 8 chars visibles en listado): ")
-            seleccion = next((d for d in items if d.id.startswith(dev_id) or d.id == dev_id), None)
+            dev_id = _input_opcion("ID del dispositivo (completo o prefijo, mín. 4 chars): ")
+            try:
+                seleccion = registro.buscar_dispositivo(dev_id)
+            except ExcepcionConfiguracionInvalida as err:
+                print(f"Error: {err}")
+                continue
             if not seleccion:
                 print("No encontrado.")
                 continue
@@ -175,15 +179,15 @@ def menu_interactivo(registro: RegistroLaboratorio, repo: RepositorioInventario)
             elif op == "6":
                 try:
                     nuevo = _input_opcion("Nuevo estado (activo/inactivo/mantenimiento/falla): ")
-                    seleccion.estado = nuevo
+                    registro.actualizar_estado(seleccion.id, nuevo)
                     repo.guardar_registro(registro)
-                    print(f"Estado actualizado: {seleccion}")
+                    print(f"Estado actualizado: {registro.obtener(seleccion.id)}")
                 except ExcepcionConfiguracionInvalida as err:
                     print(f"Error: {err}")
                 finally:
                     pass
             elif op == "7":
-                registro.eliminar(seleccion.id)
+                registro.eliminar_dispositivo(seleccion.id)
                 repo.guardar_registro(registro)
                 print("Eliminado.")
             continue
