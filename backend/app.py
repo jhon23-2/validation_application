@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import os
 
-from flask import Flask, jsonify, request
+from pathlib import Path
+
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 from excepciones_personalizadas import (
@@ -20,9 +22,62 @@ CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGIN", "*")}})
 _repo = RepositorioInventario()
 _registro = _repo.cargar_registro()
 
+_FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
 
 def _persistir() -> None:
     _repo.guardar_registro(_registro)
+
+
+def _ui_disponible() -> bool:
+    return (_FRONTEND_DIST / "index.html").is_file()
+
+
+def _pagina_ayuda_ui() -> str:
+    return """<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Lab Redes — API</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    code { background: #f0f0f0; padding: 0.15rem 0.35rem; border-radius: 4px; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>API en ejecución</h1>
+  <p>Estás en el <strong>backend Flask</strong> (puerto 5000). Aquí no hay interfaz en <code>/</code> hasta compilar el frontend.</p>
+  <h2>Cómo abrir la aplicación</h2>
+  <ol>
+    <li>En otra terminal: <code>cd frontend</code> → <code>npm run dev</code></li>
+    <li>Abre <a href="http://localhost:5173">http://localhost:5173</a></li>
+  </ol>
+  <p><strong>Opción un solo puerto:</strong> <code>cd frontend</code> → <code>npm run build</code>, reinicia <code>app.py</code> y vuelve a abrir <a href="http://127.0.0.1:5000">http://127.0.0.1:5000</a>.</p>
+  <p>API: <a href="/api/health">/api/health</a></p>
+</body>
+</html>"""
+
+
+@app.get("/")
+def servir_ui_raiz():
+    if _ui_disponible():
+        return send_from_directory(_FRONTEND_DIST, "index.html")
+    return _pagina_ayuda_ui(), 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
+@app.get("/assets/<path:asset_path>")
+def servir_assets(asset_path: str):
+    if not _ui_disponible():
+        return jsonify({"error": "Frontend no compilado. Ejecuta npm run build en frontend/."}), 404
+    return send_from_directory(_FRONTEND_DIST / "assets", asset_path)
+
+
+@app.get("/favicon.ico")
+def favicon():
+    if _ui_disponible() and (_FRONTEND_DIST / "favicon.ico").is_file():
+        return send_from_directory(_FRONTEND_DIST, "favicon.ico")
+    return "", 204
 
 
 @app.errorhandler(ExcepcionConfiguracionInvalida)
